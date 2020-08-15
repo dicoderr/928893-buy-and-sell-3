@@ -5,7 +5,7 @@ const {Cli} = require(`./cli`);
 const DEFAULT_COMMAND = `--version`;
 const ExitCode = {success: 0, error: 1};
 
-const args = process.argv.slice(1);
+const args = process.argv.slice(2);
 const [cmd] = args;
 
 if (args.length === 0 || !Cli[cmd]) {
