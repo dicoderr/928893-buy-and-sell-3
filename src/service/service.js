@@ -1,11 +1,12 @@
 'use strict';
 
+const {ExitCode} = require(`../constants`);
 const {Cli} = require(`./cli`);
 
 const DEFAULT_COMMAND = `--version`;
-const ExitCode = {success: 0, error: 1};
+const USER_ARGV_INDEX = 2;
 
-const args = process.argv.slice(2);
+const args = process.argv.slice(USER_ARGV_INDEX);
 const [cmd] = args;
 
 if (args.length === 0 || !Cli[cmd]) {
