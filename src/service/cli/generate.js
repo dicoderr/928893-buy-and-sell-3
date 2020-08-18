@@ -1,6 +1,7 @@
 'use strict';
 
-const fs = require(`fs`);
+const fs = require(`fs`).promises;
+const chalk = require(`chalk`);
 const {ExitCode} = require(`../../constants`);
 const {getRandomInt, shuffle, getRandomRange} = require(`../../utils`);
 
@@ -84,21 +85,22 @@ const generateOffers = (count) => Array(count).fill(1).map(() => ({
 
 module.exports = {
   name: `--generate`,
-  run(args) {
+  async run(args) {
     const [countArg] = args;
     const offersCount = Number.parseInt(countArg, 10) || DEFAULT_COUNT;
 
     if (offersCount > MAX_COUNT) {
-      console.info(`Не больше 1000 объявлений`);
+      console.info(chalk.blue(`Не больше 1000 объявлений`));
       process.exit(ExitCode.success);
     }
 
     const data = JSON.stringify(generateOffers(offersCount));
     try {
-      fs.writeFileSync(FILE_NAME, data);
+      await fs.writeFile(FILE_NAME, data);
+      console.info(chalk.green(`Данные записаны в файл mocks.json`));
     } catch (e) {
-      console.error(`Не удалось записать данные в файл...`);
-      console.error(`Ошибка: ${e.message}`);
+      console.error(chalk.red(`Не удалось записать данные в файл...`));
+      console.error(chalk.red(`Ошибка: ${e.message}`));
       process.exit(ExitCode.error);
     }
   },
