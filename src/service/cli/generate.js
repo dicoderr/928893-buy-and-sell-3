@@ -7,9 +7,10 @@ const {getRandomInt, shuffle, getRandomRange} = require(`../../utils`);
 
 const DEFAULT_COUNT = 1;
 const MAX_COUNT = 1000;
-const MAX_DESC_DESC_LINES = 5;
+const MAX_SENTENCES = 5;
 const MAX_CATEGORIES = 3;
 const FILE_NAME = `mocks.json`;
+const DATA_DIR = `data`;
 
 const PRICE = {
   MIN: 1000,
@@ -21,49 +22,12 @@ const TYPE = {
   SALE: `sale`,
 };
 
-const CATEGORIES = [
-  `Книги`,
-  `Разное`,
-  `Посуда`,
-  `Игры`,
-  `Животные`,
-  `Журналы`,
-];
-
-const TITLES = [
-  `Продам книги Стивена Кинга.`,
-  `Продам новую приставку Sony Playstation 5.`,
-  `Продам отличную подборку фильмов на VHS.`,
-  `Куплю антиквариат.`,
-  `Куплю породистого кота.`,
-  `Продам коллекцию журналов «Огонёк».`,
-  `Отдам в хорошие руки подшивку «Мурзилка».`,
-  `Продам советскую посуду. Почти не разбита.`,
-  `Куплю детские санки.`,
-];
-
-const DESC_LINES = [
-  `Товар в отличном состоянии.`,
-  `Пользовались бережно и только по большим праздникам.,`,
-  `Продаю с болью в сердце...`,
-  `Бонусом отдам все аксессуары.`,
-  `Даю недельную гарантию.`,
-  `Если товар не понравится — верну всё до последней копейки.`,
-  `Это настоящая находка для коллекционера!`,
-  `Если найдёте дешевле — сброшу цену.`,
-  `Таких предложений больше нет!`,
-  `Две страницы заляпаны свежим кофе.`,
-  `При покупке с меня бесплатная доставка в черте города.`,
-  `Кажется, что это хрупкая вещь.`,
-  `Мой дед не мог её сломать.`,
-  `Кому нужен этот новый телефон, если тут такое...`,
-  `Не пытайтесь торговаться. Цену вещам я знаю.`,
-];
-
 const PIC_NUMBER = {
   MIN: 1,
   MAX: 16,
 };
+
+let categories; let titles; let sentences;
 
 const getPictureFileName = () => `item${(`0` + getRandomInt(PIC_NUMBER.MIN, PIC_NUMBER.MAX)).slice(-2)}.jpg`;
 
@@ -74,14 +38,18 @@ const getType = () => {
 };
 
 const generateOffers = (count) => Array(count).fill(1).map(() => ({
-  title: TITLES[getRandomInt(0, TITLES.length - 1)],
+  title: titles[getRandomInt(0, titles.length - 1)],
   picture: getPictureFileName(),
-  description: getRandomRange(shuffle(DESC_LINES), MAX_DESC_DESC_LINES).join(` `),
+  description: getRandomRange(shuffle(sentences), MAX_SENTENCES).join(` `),
   type: getType(),
   sum: getRandomInt(PRICE.MIN, PRICE.MAX),
-  category: getRandomRange(shuffle(CATEGORIES), MAX_CATEGORIES),
+  category: getRandomRange(shuffle(categories), MAX_CATEGORIES),
 }));
 
+const getData = async (fileName) => {
+  const lines = await fs.readFile(fileName, `utf-8`) || ``;
+  return lines.split(`\n`).filter((v) => v);
+};
 
 module.exports = {
   name: `--generate`,
@@ -92,6 +60,16 @@ module.exports = {
     if (offersCount > MAX_COUNT) {
       console.info(chalk.blue(`Не больше 1000 объявлений`));
       process.exit(ExitCode.success);
+    }
+
+    try {
+      categories = await getData(`${DATA_DIR}/categories.txt`);
+      titles = await getData(`${DATA_DIR}/titles.txt`);
+      sentences = await getData(`${DATA_DIR}/sentences.txt`);
+    } catch (e) {
+      console.error(chalk.red(`Не удалось считать данные из файлов...`));
+      console.error(chalk.red(`Ошибка: ${e.message}`));
+      process.exit(ExitCode.error);
     }
 
     const data = JSON.stringify(generateOffers(offersCount));
