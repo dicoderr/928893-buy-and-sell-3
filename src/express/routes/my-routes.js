@@ -4,10 +4,10 @@ const {Router} = require(`express`);
 const router = new Router();
 
 router.get(`/`, (req, res) => {
-  res.send(`/my`);
+  res.render(`my-tickets`);
 });
 router.get(`/comments`, (req, res) => {
-  res.send(`/my/comments`);
+  res.render(`comments`);
 });
 
 module.exports = router;
