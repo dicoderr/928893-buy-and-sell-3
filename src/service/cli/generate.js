@@ -11,6 +11,7 @@ const DEFAULT_COUNT = 1;
 const MAX_COUNT = 1000;
 const MAX_SENTENCES = 5;
 const MAX_CATEGORIES = 3;
+const MAX_COMMENTS = 2;
 const FILE_NAME = `mocks.json`;
 const DATA_DIR = `data`;
 
@@ -32,6 +33,7 @@ const PIC_NUMBER = {
 let categories;
 let titles;
 let sentences;
+let comments;
 
 const getPictureFileName = () => `item${(`0` + getRandomInt(PIC_NUMBER.MIN, PIC_NUMBER.MAX)).slice(-2)}.jpg`;
 
@@ -40,6 +42,14 @@ const getType = () => {
 
   return TYPE[types[getRandomInt(0, types.length)]];
 };
+
+const generateComments = (count) =>
+  Array(count)
+    .fill(1)
+    .map(()=>({
+      id: nanoid(MAX_ID_LENGTH),
+      text: shuffle(comments).slice(0, getRandomInt(1, 3)).join(` `)
+    }));
 
 const generateOffers = (count) =>
   Array(count)
@@ -52,6 +62,7 @@ const generateOffers = (count) =>
       type: getType(),
       sum: getRandomInt(PRICE.MIN, PRICE.MAX),
       category: getRandomRange(shuffle(categories), MAX_CATEGORIES),
+      comments: generateComments(getRandomInt(1, MAX_COMMENTS)),
     }));
 
 const getData = async (fileName) => {
@@ -74,6 +85,7 @@ module.exports = {
       categories = await getData(`${DATA_DIR}/categories.txt`);
       titles = await getData(`${DATA_DIR}/titles.txt`);
       sentences = await getData(`${DATA_DIR}/sentences.txt`);
+      comments = await getData(`${DATA_DIR}/comments.txt`);
     } catch (e) {
       console.error(chalk.red(`Не удалось считать данные из файлов...`));
       console.error(chalk.red(`Ошибка: ${e.message}`));
