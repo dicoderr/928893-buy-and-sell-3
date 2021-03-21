@@ -21,8 +21,10 @@ app.use(`/offers`, offersRoutes);
 app.use(`/my`, myRoutes);
 app.use(`/`, mainRoutes);
 
-app.listen(DEFAULT_PORT, ()=> {
-  console.log(`App is listening at http://localhost:${DEFAULT_PORT}`);
-}).on(`error`, (err) => {
-  console.log(`Something went wrong: ${err.message}`);
-});
+app
+  .listen(DEFAULT_PORT, () => {
+    console.log(`App is listening at http://localhost:${DEFAULT_PORT}`);
+  })
+  .on(`error`, (err) => {
+    console.log(`Something went wrong: ${err.message}`);
+  });

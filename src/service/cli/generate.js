@@ -35,7 +35,8 @@ let titles;
 let sentences;
 let comments;
 
-const getPictureFileName = () => `item${(`0` + getRandomInt(PIC_NUMBER.MIN, PIC_NUMBER.MAX)).slice(-2)}.jpg`;
+const getPictureFileName = () =>
+  `item${(`0` + getRandomInt(PIC_NUMBER.MIN, PIC_NUMBER.MAX)).slice(-2)}.jpg`;
 
 const getType = () => {
   const types = Object.keys(TYPE);
@@ -46,9 +47,9 @@ const getType = () => {
 const generateComments = (count) =>
   Array(count)
     .fill(1)
-    .map(()=>({
+    .map(() => ({
       id: nanoid(MAX_ID_LENGTH),
-      text: shuffle(comments).slice(0, getRandomInt(1, 3)).join(` `)
+      text: shuffle(comments).slice(0, getRandomInt(1, 3)).join(` `),
     }));
 
 const generateOffers = (count) =>
@@ -66,7 +67,7 @@ const generateOffers = (count) =>
     }));
 
 const getData = async (fileName) => {
-  const lines = await fs.readFile(fileName, `utf-8`) || ``;
+  const lines = (await fs.readFile(fileName, `utf-8`)) || ``;
   return lines.split(`\n`).filter((v) => v);
 };
 
