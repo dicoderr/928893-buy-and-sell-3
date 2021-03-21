@@ -1,15 +1,15 @@
-'use strict';
+"use strict";
 
 const express = require(`express`);
 const offersRoutes = require(`./routes/offers-routes`);
 
+const DEFAULT_PORT = 3000;
 const HTTP_NOT_FOUND_CODE = 404;
-
 
 module.exports = {
   name: `--server`,
   run(args) {
-    const port = Number.isInteger(+args[0]) ? args[0] : 3000;
+    const port = Number.parseInt(args[0], 10) || DEFAULT_PORT;
 
     const app = express();
     app.use(express.json());
@@ -20,5 +20,5 @@ module.exports = {
     app.listen(port, () => {
       return console.info(`Принимаю подключения на ${port}`);
     });
-  }
+  },
 };
