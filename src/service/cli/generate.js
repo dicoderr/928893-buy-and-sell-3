@@ -2,9 +2,11 @@
 
 const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
+const {nanoid} = require(`nanoid`);
 const {ExitCode} = require(`../../constants`);
 const {getRandomInt, shuffle, getRandomRange} = require(`../../utils`);
 
+const MAX_ID_LENGTH = 6;
 const DEFAULT_COUNT = 1;
 const MAX_COUNT = 1000;
 const MAX_SENTENCES = 5;
@@ -27,7 +29,9 @@ const PIC_NUMBER = {
   MAX: 16,
 };
 
-let categories; let titles; let sentences;
+let categories;
+let titles;
+let sentences;
 
 const getPictureFileName = () => `item${(`0` + getRandomInt(PIC_NUMBER.MIN, PIC_NUMBER.MAX)).slice(-2)}.jpg`;
 
@@ -37,14 +41,18 @@ const getType = () => {
   return TYPE[types[getRandomInt(0, types.length)]];
 };
 
-const generateOffers = (count) => Array(count).fill(1).map(() => ({
-  title: titles[getRandomInt(0, titles.length - 1)],
-  picture: getPictureFileName(),
-  description: getRandomRange(shuffle(sentences), MAX_SENTENCES).join(` `),
-  type: getType(),
-  sum: getRandomInt(PRICE.MIN, PRICE.MAX),
-  category: getRandomRange(shuffle(categories), MAX_CATEGORIES),
-}));
+const generateOffers = (count) =>
+  Array(count)
+    .fill(1)
+    .map(() => ({
+      id: nanoid(MAX_ID_LENGTH),
+      title: titles[getRandomInt(0, titles.length - 1)],
+      picture: getPictureFileName(),
+      description: getRandomRange(shuffle(sentences), MAX_SENTENCES).join(` `),
+      type: getType(),
+      sum: getRandomInt(PRICE.MIN, PRICE.MAX),
+      category: getRandomRange(shuffle(categories), MAX_CATEGORIES),
+    }));
 
 const getData = async (fileName) => {
   const lines = await fs.readFile(fileName, `utf-8`) || ``;
