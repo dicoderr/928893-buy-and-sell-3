@@ -1,10 +1,11 @@
-"use strict";
+'use strict';
 
 const express = require(`express`);
-const offersRoutes = require(`./routes/offers-routes`);
+const routes = require(`../api`);
+const {HttpCode} = require(`../../constants`);
 
 const DEFAULT_PORT = 3000;
-const HTTP_NOT_FOUND_CODE = 404;
+const API_PREFIX = `/api`;
 
 module.exports = {
   name: `--server`,
@@ -14,8 +15,8 @@ module.exports = {
     const app = express();
     app.use(express.json());
 
-    app.use(`/offers`, offersRoutes);
-    app.use((req, res) => res.status(HTTP_NOT_FOUND_CODE).send(`Not found`));
+    app.use(API_PREFIX, routes);
+    app.use((req, res) => res.status(HttpCode.NOT_FOUND).send(`Not found`));
 
     app.listen(port, () => {
       return console.info(`Принимаю подключения на ${port}`);
